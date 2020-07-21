@@ -1,0 +1,173 @@
+ntroduction
+In this tutorial, we'll be building our very own weather app with HTML, CSS, and JavaScript. To retrieve the data, we'll be using something called an API, or an application programming interface.
+
+Well, we're actually going to use two APIs: one to get the location of the user and another to fetch weather data based on the user's location!
+
+Getting Started
+To retrieve a user's location, we'll be using the Geolocation Web API to auto-detect the user's latitude and longitude. Once we have this information, we can make a request to a weather source – like OpenWeatherMap — to get weather data based on a user's location.
+
+First off, go ahead and sign up for a free API key on OpenWeatherMap here. Once you're signed in, click on API keys and create a key. It should look something like a146799a227e8ab658304c1b30cc8cfa.
+
+Now that we have our API key, we can create our files:
+
+index.html - for our markup
+style.css - for styling
+app.js - for the function(s) to fetch data from our APIs
+As you probably saw in the preview in the image above, we are going to be displaying the current temperature, a short description, and the coordinates based on the user's location. To do this, we'll need to go into our html document and make sure we've first linked our stylesheet style.css and javascript file app.js.
+
+Then, in our <body> tag, let's create three elements with three unique ids. We can create an <h1> tag with the id of temperature, a <h2> tag with an id of description and a <p> tag with an id of location. In the future, you can add more elements for markup and display even more detailed data from our weather API here.
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="style.css" />
+    <title>Weather App</title>
+  </head>
+
+  <body>
+    <h1 id="temperature"></h1>
+    <h2 id="description"></h2>
+    <p id="location"></p>
+  </body>
+
+  <script src="app.js"></script>
+</html>
+
+Great, now that we've got our markup, let's actually fetch data. Your file — when previewed in the broswer — should still be blank.
+
+Fetching Geolocation Data
+Before we fetch data from our APIs, we'll need to assign variables to each id in our HTML markup. We can do that by using the document.getElementById function. Go ahead and write a function getWeather() which sets each id in our HTML markup equal to a variable!
+
+Solution
+function getWeather() {
+  let temperature = document.getElementById("temperature");
+  let description = document.getElementById("description");
+  let location = document.getElementById("location");
+}
+Awesome! We know have connected our JavaScript to the HTML markup. This will allow us to edit the innerHTML of the tags we've linked by id.
+
+Next, let's continue to write our getWeather() function by adding variables for our weather API endpoint (url) and apiKey.
+
+let api = "https://api.openweathermap.org/data/2.5/weather";
+let apiKey = "YOUR API KEY HERE";
+Sweet. Now, let's call our geolocation web API by using the following:
+
+navigator.geolocation.getCurrentPosition(success, error);
+What exactly is this function? Well, it's a built-in web API which allows us to request the user's location. Whenever someone comes onto our weather app, it will ask if it has permission to access their location. If it does, it will then get the current position of a person in terms of their latitude and longitude. To have this work, we'll need to pass in two functions: success() and error(). These functions will be called depending if the navigator.geolocation.getCurrentPosition() function returns valid location data or throws an error. After you call the geolocation API, try console logging the data you get on success and/or on error.
+
+function success(position) {
+ console.log(position);
+}
+
+function error() {
+ console.log("error");
+}
+In order to see this data, make sure you call the getWeather() function somewhere outside of the function since all our code and error is within it.
+
+getWeather()
+Open up your index.html file in your browser and navigate to your console. You should see geolocation data like this!
+
+coords: GeolocationCoordinates
+  accuracy: 8979
+  altitude: null
+  altitudeAccuracy: null
+  heading: null
+  latitude: 37.348352
+  longitude: -71.3344
+Pretty cool, right? Now let's send this location data to OpenWeatherMap so that we can get some weather data! Let's expand upon our success() function to do this.
+
+By looking at the data that we've logged, set the latitude and longitude equal to variables named latitude and longitude.
+
+Solution
+latitude = position.coords.latitude;
+longitude = position.coords.longitude;
+Great! Let's move on to making our API request.
+
+In JavaScript, we can use the fetch API, which provides an interface for fetching resources from anywhere on the internet! We can hit this url to get our data:
+
+let url =
+      api +
+      "?lat=" +
+      latitude +
+      "&lon=" +
+      longitude +
+      "&appid=" +
+      apiKey +
+      "&units=imperial";
+If you're curious, try constructing this string yourself with the latitude and longitude that you logged earlier! If you go to that link in your browser, you'll see weather data in JSON outputted based on the location you've submitted in the URL! This is exactly the data that we'll be fetching.
+
+We can fetch the data by passing in our url into the fetch() web API. Then, we can use something called a promise to execute a set of code after we've fetched the data. In this case, we'd want to take the data we've fetched and display it on our webpage, which means setting the innerHTML of the tags we created earlier to the temperature, description, and location from our weather data request!
+
+fetch(url)
+      .then(response => response.json())
+      .then(data => {
+        console.log(data);
+        let temp = data.main.temp;
+        temperature.innerHTML = temp + "° F";
+        location.innerHTML =
+          data.name + " (" + latitude + "°, " + longitude + "°)";
+        description.innerHTML = data.weather[0].main;
+      });
+Sweet! The data you fetched is now displayed on your webpage! Here is what your JavaScript should look like after you're done. I've just added some text whenever the location is not found (when there is an error) and added additional text to show the user that they are currently being "located" and that we are still loading in all the weather data. This message then gets overwritten with actual weather data.
+
+function getWeather() {
+  let temperature = document.getElementById("temperature");
+  let description = document.getElementById("description");
+  let location = document.getElementById("location");
+
+  let api = "https://api.openweathermap.org/data/2.5/weather";
+  let apiKey = "f146799a557e8ab658304c1b30cc3cfd";
+
+  location.innerHTML = "Locating...";
+
+  navigator.geolocation.getCurrentPosition(success, error);
+
+  function success(position) {
+    latitude = position.coords.latitude;
+    longitude = position.coords.longitude;
+
+    let url =
+      api +
+      "?lat=" +
+      latitude +
+      "&lon=" +
+      longitude +
+      "&appid=" +
+      apiKey +
+      "&units=imperial";
+
+    fetch(url)
+      .then(response => response.json())
+      .then(data => {
+        console.log(data);
+        let temp = data.main.temp;
+        temperature.innerHTML = temp + "° F";
+        location.innerHTML =
+          data.name + " (" + latitude + "°, " + longitude + "°)";
+        description.innerHTML = data.weather[0].main;
+      });
+  }
+
+  function error() {
+    location.innerHTML = "Unable to retrieve your location";
+  }
+}
+
+getWeather();
+
+There you have it! We now have a functional weather app :)
+
+Some styling
+Here's my take on some basic centering and font changes in CSS. Feel free to style the page to your liking.
+
+html {
+  font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto,
+    sans-serif;
+  text-align: center;
+}
+
+body {
+  margin: 0 auto;
+}

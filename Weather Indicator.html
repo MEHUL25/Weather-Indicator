@@ -1,0 +1,130 @@
+<!doctypehtml>
+<html>
+<head style="font-size: 200%;">
+      <style>
+              #show
+              {
+              display: none;
+              }
+                html
+                {
+                  font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto,
+                    sans-serif;
+
+                }
+                h1{
+                  text-align: center;
+                }
+                footer
+                {
+                  text-align: center;
+                }
+                body {
+                  margin: 0 auto;
+                }
+                .button {
+
+                    background-color: #4CAF50; /* Green */
+                	  border: none;
+                	  color: white;
+                	  padding: 15px 32px;
+                	  text-align: center;
+                	  text-decoration: none;
+                	  display: inline-block;
+                	  font-size: 16px;
+                	  margin: 4px 2px;
+                	  cursor: pointer;
+                	}
+                	.button:hover {background-color: #3e8e41}
+
+                	.button:active {
+                	  background-color: #3e8e41;
+                	  box-shadow: 0 5px #666;
+                	  transform: translateY(4px);
+                	}
+      </style>
+  <title>Weather Indicator</title>
+	<br><br><br><h1>Weather Indicator</h1><hr><br><br><br><br>
+</head>
+
+
+<body style="font-size: 150%;">
+        <button style="margin-left: 45%" class="button" onclick="start()">Check Weather</button>
+        <div id="show" style="margin-left:25%"><br><br>
+             <p id="temperature"></p>
+            <br>
+          <p id="description"></p>
+            <br>
+          <p id="location"></p>
+            <br>
+        </div>
+
+
+      <script>
+      function start()
+      {
+          var y = document.getElementById("show");
+          if (y.style.display === "none")
+    			{
+    				y.style.display = "block";
+    			}
+    			else
+    			{
+    				y.style.display = "none";
+    			}
+          getWeather();
+      }
+      function getWeather()
+      {
+        var temperature = document.getElementById("temperature");
+        var description = document.getElementById("description");
+        var location = document.getElementById("location");
+
+        var api = "https://api.openweathermap.org/data/2.5/weather";
+        var apiKey = "f146799a557e8ab658304c1b30cc3cfd";
+
+        location.innerHTML = "Locating...";
+
+        navigator.geolocation.getCurrentPosition(success, error);
+
+        function success(position) {
+          latitude = position.coords.latitude;
+          longitude = position.coords.longitude;
+
+          let url =
+            api +
+            "?lat=" +
+            latitude +
+            "&lon=" +
+            longitude +
+            "&appid=" +
+            apiKey +
+            "&units=imperial";
+
+          fetch(url)
+            .then(response => response.json())
+            .then(data => {
+              console.log(data);
+              let temp = data.main.temp;
+              temperature.innerHTML ="Temperature   :   " +temp + "° F";
+              location.innerHTML = "Location (Lat. , Long. )  :   "+
+                data.name + " (" + latitude + "°, " + longitude + "°)";
+              description.innerHTML = "Type of Weather :  "+data.weather[0].main;
+            });
+        }
+
+        function error() {
+          location.innerHTML = "Unable to retrieve your location";
+        }
+      }
+
+</script>
+
+<br><br><br><br><br><br><br><br><br>
+</body>
+
+<footer style="background-color:rgb(16, 16, 16);color:rgb(255, 255, 255);"><hr>
+<p style="margin-left: 7%;"> &copy;  2020 | Mehul Lokhande </p>
+<br>
+</footer>
+</html>
