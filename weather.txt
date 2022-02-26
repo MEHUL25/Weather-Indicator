@@ -1,5 +1,5 @@
 ntroduction
-In this tutorial, we'll be building our very own weather app with HTML, CSS, and JavaScript. To retrieve the data, we'll be using something called an API, or an application programming interface.
+We'll be building our very own weather app with HTML, CSS, and JavaScript. To retrieve the data, we'll be using something called an API, or an application programming interface.
 
 Well, we're actually going to use two APIs: one to get the location of the user and another to fetch weather data based on the user's location!
 
